@@ -1,0 +1,51 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "CloudOptima Hourly Run-Rate ($)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "editorMode": "code",
+          "expr": "sum(aws_cost_per_hour_metric)",
+          "legendFormat": "Hourly Cost",
+          "range": true
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "title": "Underutilized EC2 Worker Nodes",
+      "type": "state-timeline",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "aws_cpu_utilization_metric < 5",
+          "legendFormat": "Idle Instance: {{instance_id}}"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["finops", "aws"],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "title": "FinOps CloudOptima Core Dashboard"
+}

@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15-alpine
+    container_name: cloudoptima_db
+    environment:
+      POSTGRES_USER: finops_user
+      POSTGRES_PASSWORD: finops_password
+      POSTGRES_DB: cloudoptima_finops
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ../../database/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+    networks:
+      - cloudoptima_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: cloudoptima_cache
+    ports:
+      - "6379:6379"
+    networks:
+      - cloudoptima_net
+
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: ../devops/docker/Dockerfile.backend
+    container_name: cloudoptima_backend
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DATABASE_URL=postgresql://finops_user:finops_password@database:5432/cloudoptima_finops
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=finops-secure-jwt-key
+    depends_on:
+      - database
+      - redis
+    networks:
+      - cloudoptima_net
+
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: ../devops/docker/Dockerfile.frontend
+    container_name: cloudoptima_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - cloudoptima_net
+
+volumes:
+  postgres_data:
+
+networks:
+  cloudoptima_net:
+    driver: bridge
