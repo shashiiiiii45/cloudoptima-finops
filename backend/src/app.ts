@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { getAWSCosts } from "./services/costExplorer";
 import { createServer } from 'http';
 import jwt from 'jsonwebtoken';
 import { WsServer } from './socket/wsServer.js';
@@ -97,6 +98,24 @@ app.post('/api/chat', (req, res) => {
   return res.json({ reply });
 });
 
+app.get("/api/aws-costs", async (req, res) => {
+  try {
+    const data = await getAWSCosts();
+
+    return res.json({
+      success: true,
+      source: "AWS Cost Explorer",
+      results: data,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      error: "Failed to fetch AWS Cost Explorer data",
+    });
+  }
+});
 // Helper getter
 function MockGeneratorGetAlerts() {
   return [
