@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { getAWSCosts } from "./services/costExplorer";
+import { getAWSCosts } from "./services/costExplorer.js";
 import { createServer } from 'http';
 import jwt from 'jsonwebtoken';
 import { WsServer } from './socket/wsServer.js';
@@ -8,7 +8,7 @@ import { AWSProvider } from './services/awsProvider.js';
 import { authenticateToken, requireRole, AuthenticatedRequest } from './middleware/auth.js';
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'finops-secure-jwt-key';
 
 // Middlewares
